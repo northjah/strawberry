@@ -1,0 +1,27 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    /* 禁用水平和垂直滚动条 */
+    /*overflow: hidden;*/
+}
+
+.timer-container {
+    display: flex;            /* 开启弹性布局 */
+    flex-direction: column;   /* 元素垂直排列 */
+    align-items: center;      /* 水平方向居中 */
+    justify-content: center;  /* 垂直方向居中 (如果容器有高度) */
+    text-align: center;       /* 文字居中 */
+    gap: 20px;                /* 按钮和计时器之间的间距 */
+
+    /* 如果你想让它在整个屏幕居中，可以加上下面两行 */
+    /* height: 100vh; */
+}
+
+/* 如果想让按钮横向排成一排，可以把按钮包在一个 div 里，或者这样处理： */
+.button-group {
+    display: flex;
+    gap: 10px;
+}

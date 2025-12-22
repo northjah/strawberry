@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strawberry - 高性能跨平台桌面框架</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* ===============================
+   Strawberry Scrollbar
+   Chromium / JCEF 专用
+   =============================== */
+
+        /* 整体滚动条 */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        /* 滚动条轨道 */
+        ::-webkit-scrollbar-track {
+            background: transparent;
+            margin: 4px;
+        }
+
+        /* 滚动条滑块 */
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(
+                    135deg,
+                    #ff4d6d,
+                    #ff7a90
+            );
+            border-radius: 999px;
+            border: 2px solid rgba(255, 255, 255, 0.6);
+            box-shadow:
+                    0 0 8px rgba(255, 77, 109, 0.45);
+        }
+
+        /* hover 效果 */
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(
+                    135deg,
+                    #ff2e55,
+                    #ff6b82
+            );
+            box-shadow:
+                    0 0 12px rgba(255, 77, 109, 0.75);
+        }
+
+        /* active（拖动中） */
+        ::-webkit-scrollbar-thumb:active {
+            background: #ff2e55;
+        }
+
+        /* 角落（横竖滚动条交汇处） */
+        ::-webkit-scrollbar-corner {
+            background: transparent;
+        }
+
+        :root {
+            --strawberry-red: #ff4d6d;
+            --chrome-blue: #1a73e8;
+            --bg-dark: #0f172a;
+        }
+
+        body {
+            font-family: 'JetBrains Mono', 'Consolas', monospace;
+            background-color: #f8f9fa;
+            color: #334155;
+        }
+
+        /* 导航栏 */
+        .navbar {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            color: var(--strawberry-red) !important;
+            letter-spacing: -1px;
+        }
+
+        /* Hero 区域 */
+        .hero-section {
+            padding: 100px 0;
+            background: linear-gradient(135deg, #fff 0%, #fff5f6 100%);
+        }
+
+        .badge-new {
+            background-color: rgba(255, 77, 109, 0.1);
+            color: var(--strawberry-red);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+        }
+
+        /* 卡片设计 */
+        .feature-card {
+            border: none;
+            border-radius: 16px;
+            padding: 2rem;
+            background: #fff;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .icon-box {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+
+        .btn-primary {
+            background-color: var(--chrome-blue);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .btn-outline-strawberry {
+            border: 2px solid var(--strawberry-red);
+            color: var(--strawberry-red);
+            font-weight: 600;
+            border-radius: 8px;
+        }
+
+        .btn-outline-strawberry:hover {
+            background: var(--strawberry-red);
+            color: #fff;
+        }
+
+        /* 代码预览区 */
+        .code-window {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 20px;
+            color: #e2e8f0;
+            font-size: 0.9rem;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+        }
+
+        .code-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg sticky-top">
+    <div class="container">
+        <a class="navbar-brand" href="#">STRAWBERRY.</a>
+        <div class="ms-auto">
+            <a href="#" class="btn btn-outline-strawberry btn-sm">GitHub</a>
+        </div>
+    </div>
+</nav>
+
+<header class="hero-section text-center">
+    <div class="container">
+        <span class="badge-new">v1.2.0 已发布：支持 JCEF 透明渲染</span>
+        <h1 class="display-3 fw-bold mb-4">用 Java 像写网页一样<br><span style="color:var(--chrome-blue)">构建桌面应用</span></h1>
+        <p class="lead text-muted mb-5">Strawberry 融合了 FlatLaf 的原生性能与 JCEF 的极致渲染，<br>让 Swing 焕发第二春。</p>
+        <div class="d-flex justify-content-center gap-3">
+            <button class="btn btn-primary px-5 shadow">立即开始</button>
+            <button class="btn btn-light border px-5">文档</button>
+        </div>
+    </div>
+</header>
+
+<section class="container py-5">
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="feature-card">
+                <div class="icon-box" style="background: rgba(26, 115, 232, 0.1); color: var(--chrome-blue);">
+                    UI
+                </div>
+                <h4>FlatLaf 核心</h4>
+                <p class="text-muted">内置 FlatLightLaf 设置，全局 Console 字体支持，DPI 自适应缩放，彻底告别 Swing 丑陋的默认界面。</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card">
+                <div class="icon-box" style="background: rgba(255, 77, 109, 0.1); color: var(--strawberry-red);">
+                    CEF
+                </div>
+                <h4>JCEF 混合渲染</h4>
+                <p class="text-muted">在 Swing 中完美嵌入 Chromium 内核。支持 HTML5/CSS3，让你的对话框、图表展现力无上限。</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card">
+                <div class="icon-box" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">
+                    📦
+                </div>
+                <h4>Spring Boot</h4>
+                <p class="text-muted">深度集成 Spring 生态，支持依赖注入、容器管理，像开发后端一样开发 GUI 客户端。</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="container py-5">
+    <div class="row align-items-center">
+        <div class="col-lg-6 mb-4">
+            <h2 class="fw-bold mb-4">几行代码，<br>搞定全局 Console 风格</h2>
+            <p class="text-muted">Strawberry 提供了暴力 UIManager 覆盖方案，确保每一个按钮、标签都统一使用等宽字体，且中文字符绝不乱码。</p>
+            <ul class="list-unstyled">
+                <li class="mb-2">✅ 自动检测 DPI 缩放</li>
+                <li class="mb-2">✅ 强制 Console 字体继承</li>
+                <li class="mb-2">✅ 解决了 Consolas 中文乱码痛点</li>
+            </ul>
+        </div>
+        <div class="col-lg-6">
+            <div class="code-window">
+                <div class="mb-3">
+                    <span class="code-dot" style="background: #ff5f56;"></span>
+                    <span class="code-dot" style="background: #ffbd2e;"></span>
+                    <span class="code-dot" style="background: #27c93f;"></span>
+                </div>
+                <pre><code><span style="color:#f472b6;">FlatLightLaf</span>.setup();
+<span style="color:#7dd3fc;">Font</span> base = <span style="color:#7dd3fc;">UIManager</span>.getFont(<span style="color:#fbbf24;">"defaultFont"</span>);
+<span style="color:#7dd3fc;">FontUIResource</span> f = <span style="color:#c084fc;">new</span> <span style="color:#f472b6;">FontUIResource</span>(
+    <span style="color:#fbbf24;">"Monospaced"</span>,
+    <span style="color:#7dd3fc;">Font</span>.PLAIN,
+    base.getSize()
+);
+<span style="color:#7dd3fc;">UIManager</span>.put(<span style="color:#fbbf24;">"defaultFont"</span>, f);</code></pre>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer class="py-5 text-center border-top bg-white mt-5">
+    <p class="text-muted mb-0">© 2025 Strawberry Project. Powered by Northjah.</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    alert(4)
+</script>
+</body>
+</html>

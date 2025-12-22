@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>4.0.1</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>com.northjah.code</groupId>
+	<artifactId>strawberry</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>strawberry</name>
+	<packaging>pom</packaging>
+	<description>strawberry project for Spring Boot</description>
+	<url/>
+	<licenses>
+		<license/>
+	</licenses>
+	<developers>
+		<developer/>
+	</developers>
+	<scm>
+		<connection/>
+		<developerConnection/>
+		<tag/>
+		<url/>
+	</scm>
+	<properties>
+		<java.version>25</java.version>
+		<maven.compiler.source>25</maven.compiler.source>
+		<maven.compiler.target>25</maven.compiler.target>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<jcefmaven-version>141.0.10</jcefmaven-version>
+		<flatlaf-version>3.7</flatlaf-version>
+		<jna-version>5.18.1</jna-version>
+	</properties>
+
+	<modules>
+		<module>strawberry-ui</module>
+		<module>strawberry-api</module>
+	</modules>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>net.java.dev.jna</groupId>
+				<artifactId>jna</artifactId>
+				<version>${jna-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>net.java.dev.jna</groupId>
+				<artifactId>jna-platform</artifactId>
+				<version>${jna-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>me.friwi</groupId>
+				<artifactId>jcefmaven</artifactId>
+				<version>${jcefmaven-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.northjah.code</groupId>
+				<artifactId>strawberry-api</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.formdev</groupId>
+				<artifactId>flatlaf</artifactId>
+				<version>${flatlaf-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.formdev</groupId>
+				<artifactId>flatlaf-extras</artifactId>
+				<version>${flatlaf-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.formdev</groupId>
+				<artifactId>flatlaf-intellij-themes</artifactId>
+				<version>${flatlaf-version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+</project>
