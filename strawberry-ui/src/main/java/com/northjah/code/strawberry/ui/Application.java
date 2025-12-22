@@ -41,7 +41,7 @@ public class Application {
 // 2. 设置图标的大小 (默认通常是 16x16)
         UIManager.put("TitlePane.iconSize", new Dimension(32, 32));
 // 这里的 24 就是字体大小，你可以根据需要改成 30, 40 等
-    //    UIManager.put("TitlePane.font", new Font("sans-serif", Font.BOLD, 15));
+       UIManager.put("TitlePane.font", new Font("sans-serif", Font.BOLD, 15));
 // 3. 设置图标的边距 (上, 左, 下, 右)
     //    UIManager.put("TitlePane.iconMargins", new Insets(5, 10, 5, 5));
 
