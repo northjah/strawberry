@@ -13,7 +13,13 @@ import java.awt.event.*;
 import java.io.File;
 
 public class GhostResizeWithCEF extends JFrame {
+    static {
 
+        System.load("C:\\Users\\xiaoyi\\Desktop\\project\\Project1\\x64\\Release\\Project1.dll");
+    }
+
+    // native 方法，直接接收当前的 JFrame 对象
+    private native void attachSnap(JFrame frame);
     // ===== 窗口参数 =====
     private static final int BORDER = 6;
     private static final int TITLE_HEIGHT = 36;
@@ -111,96 +117,61 @@ public class GhostResizeWithCEF extends JFrame {
                 setCursor(cursorFor(detectDir(e.getPoint())));
             }
 
-            /**
-             * 鼠标按下事件
-             * - 记录起始位置和窗口初始边界
-             * - 创建幽灵窗口显示边框
-             * - 可选：拖动开始时隐藏 CEF，避免卡顿
-             */
             @Override
             public void mousePressed(MouseEvent e) {
-                dir = detectDir(e.getPoint());  // 判断拖动方向
-                if (dir == ResizeDir.NONE) return; // 非拖动区域直接返回
+                dir = detectDir(e.getPoint());
+                startBounds = getBounds();
+                startMouse = e.getLocationOnScreen();
 
-                startBounds = getBounds();               // 记录窗口初始位置和大小
-                startMouse = e.getLocationOnScreen();    // 记录鼠标按下位置
-
-                // 👉 可选：拖动开始时隐藏 CEF（极限优化）
-                // browserUI.setVisible(false);
-
-                ghost = new GhostWindow();               // 创建幽灵窗口（虚拟边框）
-                ghost.update(startBounds);               // 设置初始边框位置
-                ghost.setVisible(true);                  // 显示幽灵边框
+                // 只有边缘拖动才创建幽灵窗口
+                if (dir != ResizeDir.NONE && dir != ResizeDir.MOVE) {
+                    ghost = new GhostWindow();
+                    ghost.update(startBounds);
+                    ghost.setVisible(true);
+                }
             }
 
-            /**
-             * 鼠标拖动事件
-             * - 根据鼠标偏移量实时计算窗口新边界
-             * - 更新幽灵边框位置
-             */
             @Override
             public void mouseDragged(MouseEvent e) {
-                if (ghost == null) return;               // 如果没有幽灵窗口，直接返回
-
                 Point p = e.getLocationOnScreen();
-                int dx = p.x - startMouse.x;            // 水平移动距离
-                int dy = p.y - startMouse.y;            // 垂直移动距离
+                int dx = p.x - startMouse.x;
+                int dy = p.y - startMouse.y;
 
-                Rectangle r = new Rectangle(startBounds); // 基于初始窗口创建新的矩形
-
-                // 根据拖动方向调整矩形大小或位置
-                switch (dir) {
-                    case MOVE -> {                       // 移动窗口
-                        r.x = startBounds.x + dx;
-                        r.y = startBounds.y + dy;
-                    }
-                    case E -> r.width = Math.max(MIN_W, startBounds.width + dx);  // 右边缘
-                    case S -> r.height = Math.max(MIN_H, startBounds.height + dy); // 下边缘
-                    case W -> resizeLeft(r, dx);         // 左边缘
-                    case N -> resizeTop(r, dy);          // 上边缘
-                    case SE -> {                         // 右下角
-                        r.width = Math.max(MIN_W, startBounds.width + dx);
-                        r.height = Math.max(MIN_H, startBounds.height + dy);
-                    }
-                    case SW -> {                         // 左下角
-                        resizeLeft(r, dx);
-                        r.height = Math.max(MIN_H, startBounds.height + dy);
-                    }
-                    case NE -> {                         // 右上角
-                        resizeTop(r, dy);
-                        r.width = Math.max(MIN_W, startBounds.width + dx);
-                    }
-                    case NW -> {                         // 左上角
-                        resizeLeft(r, dx);
-                        resizeTop(r, dy);
-                    }
+                if (dir == ResizeDir.MOVE) {
+                    // 标题栏拖动：直接移动窗口，不创建幽灵
+                    setLocation(startBounds.x + dx, startBounds.y + dy);
+                    return;
                 }
 
-                ghost.update(r);                         // 更新幽灵窗口显示边框
+                if (ghost == null) return; // 没有幽灵窗口说明不在调整大小
+
+                Rectangle r = new Rectangle(startBounds);
+                switch (dir) {
+                    case E -> r.width = Math.max(MIN_W, startBounds.width + dx);
+                    case S -> r.height = Math.max(MIN_H, startBounds.height + dy);
+                    case W -> resizeLeft(r, dx);
+                    case N -> resizeTop(r, dy);
+                    case SE -> { r.width = Math.max(MIN_W, startBounds.width + dx); r.height = Math.max(MIN_H, startBounds.height + dy); }
+                    case SW -> { resizeLeft(r, dx); r.height = Math.max(MIN_H, startBounds.height + dy); }
+                    case NE -> { resizeTop(r, dy); r.width = Math.max(MIN_W, startBounds.width + dx); }
+                    case NW -> { resizeLeft(r, dx); resizeTop(r, dy); }
+                }
+                ghost.update(r);
             }
 
-            /**
-             * 鼠标释放事件
-             * - 拖动结束，应用幽灵边框的最终位置
-             * - 销毁幽灵窗口
-             * - 恢复 CEF 可见性并刷新
-             */
             @Override
             public void mouseReleased(MouseEvent e) {
-                if (ghost == null) return;
-
-                Rectangle r = ghost.getBounds();  // 获取幽灵窗口最终边界
-                ghost.dispose();                  // 销毁幽灵窗口
-                ghost = null;
-
-                setBounds(r);                     // 应用最终窗口边界
-                dir = ResizeDir.NONE;             // 重置拖动方向
-
-                // 👉 拖动结束，恢复 CEF 可见性
-                // browserUI.setVisible(true);
-                browserUI.revalidate();           // 刷新布局
-                browserUI.repaint();              // 重绘内容
+                if (ghost != null) {
+                    Rectangle r = ghost.getBounds();
+                    ghost.dispose();
+                    ghost = null;
+                    setBounds(r);
+                    browserUI.revalidate();
+                    browserUI.repaint();
+                }
+                dir = ResizeDir.NONE;
             }
+
         };
 
 
@@ -212,6 +183,7 @@ public class GhostResizeWithCEF extends JFrame {
         titleBar.addMouseMotionListener(adapter);
 
         setVisible(true);
+        attachSnap(this);
     }
 
     /* ================= Resize 修正算法 ================= */
@@ -319,7 +291,7 @@ public class GhostResizeWithCEF extends JFrame {
             case NE -> Cursor.getPredefinedCursor(Cursor.NE_RESIZE_CURSOR); // 右上角
             case SW -> Cursor.getPredefinedCursor(Cursor.SW_RESIZE_CURSOR); // 左下角
             case SE -> Cursor.getPredefinedCursor(Cursor.SE_RESIZE_CURSOR); // 右下角
-            case MOVE -> Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);    // 移动窗口
+           // case MOVE -> Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);    // 移动窗口
             default -> Cursor.getDefaultCursor();                           // 默认箭头
         };
     }
