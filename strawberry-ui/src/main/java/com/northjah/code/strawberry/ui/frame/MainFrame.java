@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -58,6 +59,67 @@ public class MainFrame extends JFrame {
         icons.add(new ImageIcon(new File("static/icon/128.png").getAbsolutePath()).getImage());
         icons.add(new ImageIcon(new File("static/icon/256.png").getAbsolutePath()).getImage());
         setIconImages(icons);
+
+
+        // 创建菜单栏
+        // 创建菜单栏
+        JMenuBar menuBar = new JMenuBar();
+
+        // 创建菜单：File
+        JMenu fileMenu = new JMenu("File");
+
+        // 创建菜单项
+        JMenuItem openItem = new JMenuItem("Open");
+        openItem.addActionListener((ActionEvent e) -> System.out.println("Open clicked"));
+
+        JMenuItem saveItem = new JMenuItem("Save");
+        saveItem.addActionListener((ActionEvent e) -> System.out.println("Save clicked"));
+
+        JMenuItem exitItem = new JMenuItem("Exit");
+        exitItem.addActionListener((ActionEvent e) -> System.exit(0));
+
+        // 将菜单项添加到File菜单
+        fileMenu.add(openItem);
+        fileMenu.add(saveItem);
+        fileMenu.addSeparator();  // 分隔线
+        fileMenu.add(exitItem);
+
+        // 创建菜单：Edit
+        JMenu editMenu = new JMenu("Edit");
+
+        // 创建菜单项
+        JMenuItem cutItem = new JMenuItem("Cut");
+        cutItem.addActionListener((ActionEvent e) -> System.out.println("Cut clicked"));
+
+        JMenuItem copyItem = new JMenuItem("Copy");
+        copyItem.addActionListener((ActionEvent e) -> System.out.println("Copy clicked"));
+
+        JMenuItem pasteItem = new JMenuItem("Paste");
+        pasteItem.addActionListener((ActionEvent e) -> System.out.println("Paste clicked"));
+
+        // 将菜单项添加到Edit菜单
+        editMenu.add(cutItem);
+        editMenu.add(copyItem);
+        editMenu.add(pasteItem);
+
+        // 创建菜单：Help
+        JMenu helpMenu = new JMenu("Help");
+
+        // 创建菜单项
+        JMenuItem aboutItem = new JMenuItem("About");
+        aboutItem.addActionListener((ActionEvent e) -> System.out.println("About clicked"));
+
+        // 将菜单项添加到Help菜单
+        helpMenu.add(aboutItem);
+
+        // 将所有菜单添加到菜单栏
+        menuBar.add(fileMenu);
+        menuBar.add(editMenu);
+        menuBar.add(helpMenu);
+
+        // 将菜单栏设置到窗口
+        setJMenuBar(menuBar);
+
     }
 
     /**
@@ -112,11 +174,24 @@ public class MainFrame extends JFrame {
 
     private void createBrowserAndMount() {
         // 创建浏览器实例
-        browser = client.createBrowser(START_URL, false, false);
+        browser = client.createBrowser("https://www.baidu.com", false, false);
+
+
+
+        client.addLifeSpanHandler(new org.cef.handler.CefLifeSpanHandlerAdapter() {
+            @Override
+            public boolean onBeforePopup(CefBrowser browser, org.cef.browser.CefFrame frame, String target_url, String target_frame_name) {
+                // 核心逻辑：拦截弹出请求，让当前浏览器加载目标 URL
+                browser.loadURL(target_url);
+                // 返回 true 表示我们已经处理了该请求，阻止 CEF 创建新窗口
+                return true;
+            }
+        });
 
         // 获取 UI 组件并添加到 Center
         java.awt.Component uiComponent = browser.getUIComponent();
         add(uiComponent, BorderLayout.CENTER);
+
 
         // 刷新 UI
         revalidate();
