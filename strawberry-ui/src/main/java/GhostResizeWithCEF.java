@@ -14,12 +14,104 @@ import java.io.File;
 
 public class GhostResizeWithCEF extends JFrame {
     static {
+/*#include <windows.h>
+#include <windowsx.h>
+#include <jni.h>
+#include <jawt_md.h>
 
+        WNDPROC oldWndProc = nullptr;
+        LONG originalStyle = 0;
+const int TITLE_HEIGHT = 36; // Java 标题栏高度
+
+        LRESULT CALLBACK CustomWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+            switch (msg) {
+                case WM_NCCALCSIZE:
+                    return 0; // 去掉系统边框
+                case WM_NCHITTEST: {
+                    POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
+                    ScreenToClient(hwnd, &pt);
+
+                    if (pt.y >= 2 && pt.y < TITLE_HEIGHT) {
+                        return HTCAPTION; // 只有标题栏触发 Snap
+                    }
+                    return HTCLIENT; // 其他区域交给 Java 幽灵窗口
+                }
+            }
+            return CallWindowProc(oldWndProc, hwnd, msg, wParam, lParam);
+        }
+
+        extern "C" {
+
+            // 鼠标按住标题栏 → 强制追加 Snap 样式
+            JNIEXPORT void JNICALL Java_GhostResizeWithCEF_attachSnap(JNIEnv* env, jobject obj, jobject frame) {
+                JAWT awt;
+                JAWT_DrawingSurface* ds;
+                JAWT_DrawingSurfaceInfo* dsi;
+                JAWT_Win32DrawingSurfaceInfo* dsi_win;
+                jint lock;
+
+                awt.version = JAWT_VERSION_9;
+                if (JAWT_GetAWT(env, &awt) == JNI_FALSE) return;
+
+                ds = awt.GetDrawingSurface(env, frame);
+                if (!ds) return;
+
+                lock = ds->Lock(ds);
+                if (!(lock & JAWT_LOCK_ERROR)) {
+                    dsi = ds->GetDrawingSurfaceInfo(ds);
+                    dsi_win = (JAWT_Win32DrawingSurfaceInfo*)dsi->platformInfo;
+                    HWND hwnd = dsi_win->hwnd;
+                    jclass systemClass = env->FindClass("java/lang/System");
+                    jfieldID outField = env->GetStaticFieldID(systemClass, "out", "Ljava/io/PrintStream;");
+                    jobject outObj = env->GetStaticObjectField(systemClass, outField);
+
+                    // 2. 获取 PrintStream.println(String) 方法ID
+                    jclass printStreamClass = env->FindClass("java/io/PrintStream");
+                    jmethodID printlnMethod = env->GetMethodID(printStreamClass, "println", "(Ljava/lang/String;)V");
+
+                    // 3. 创建字符串
+                    jstring msg = env->NewStringUTF("attachSnap called from JNI!");
+
+                    // 4. 调用 println
+                    env->CallVoidMethod(outObj, printlnMethod, msg);
+
+                    // 5. 释放局部引用
+                    env->DeleteLocalRef(msg);
+                    if (hwnd) {
+                        // 保存原始样式
+                        originalStyle = GetWindowLong(hwnd, GWL_STYLE);
+
+                        // 强制追加 Snap 支持
+                        LONG style = originalStyle;
+                        style |= WS_CAPTION | WS_THICKFRAME | WS_MAXIMIZEBOX | WS_MINIMIZEBOX;
+                        SetWindowLong(hwnd, GWL_STYLE, style);
+
+
+                        // 设置自定义 WndProc
+                        oldWndProc = (WNDPROC)SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG_PTR)CustomWndProc);
+
+                        // 更新窗口样式
+                        SetWindowPos(hwnd, NULL, 0, 0, 0, 0,
+                                SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER);
+
+
+                    }
+
+                    ds->FreeDrawingSurfaceInfo(dsi);
+                    ds->Unlock(ds);
+                }
+
+                awt.FreeDrawingSurface(ds);
+            }
+
+        }*/
         System.load("C:\\Users\\xiaoyi\\Desktop\\project\\Project1\\x64\\Release\\Project1.dll");
     }
 
     // native 方法，直接接收当前的 JFrame 对象
     private native void attachSnap(JFrame frame);
+
+    private native void restoreSnap(JFrame frame);
     // ===== 窗口参数 =====
     private static final int BORDER = 6;
     private static final int TITLE_HEIGHT = 36;
@@ -51,6 +143,7 @@ public class GhostResizeWithCEF extends JFrame {
         JLabel title = new JLabel("  Ghost Resize + JCEF（完整示例）");
         title.setForeground(Color.WHITE);
         titleBar.add(title, BorderLayout.WEST);
+
 
         add(titleBar, BorderLayout.NORTH);
 
@@ -85,7 +178,7 @@ public class GhostResizeWithCEF extends JFrame {
         );
 
         JPanel contentRoot = new JPanel(new BorderLayout());
-        contentRoot.setBorder(BorderFactory.createEmptyBorder(6, 6, 6, 6));
+        contentRoot.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
         add(contentRoot, BorderLayout.CENTER);
 
         JPanel cefHolder = new JPanel(new BorderLayout());
@@ -370,7 +463,7 @@ public class GhostResizeWithCEF extends JFrame {
     /* ================= 入口 ================= */
 
     public static void main(String[] args) {
-        FlatLightLaf.setup();
+      //  FlatLightLaf.setup();
         SwingUtilities.invokeLater(GhostResizeWithCEF::new);
     }
 }
