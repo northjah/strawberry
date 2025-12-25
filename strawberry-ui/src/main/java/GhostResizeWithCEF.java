@@ -130,7 +130,7 @@ const int TITLE_HEIGHT = 36; // Java 标题栏高度
 
     public GhostResizeWithCEF() {
         setUndecorated(true);
-        setSize(1000, 700);
+        setSize(1000, 600);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
@@ -171,15 +171,19 @@ const int TITLE_HEIGHT = 36; // Java 标题栏高度
 
          client = cefApp.createClient();
 
+        String localHtmlPath = "file:///C:/Users/xiaoyi/Desktop/strawberry/static/index.html";
+
         browser = client.createBrowser(
-                "https://www.baidu.com",
+                localHtmlPath,
                 false,   // window rendering
                 false
         );
 
-        JPanel contentRoot = new JPanel(new BorderLayout());
-        contentRoot.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        JPanel contentRoot = new SideBottomBlueGlowPanel(new BorderLayout());
+        contentRoot.setBorder(BorderFactory.createEmptyBorder(0, 2, 2, 2));
+
         add(contentRoot, BorderLayout.CENTER);
+
 
         JPanel cefHolder = new JPanel(new BorderLayout());
         contentRoot.add(cefHolder, BorderLayout.CENTER);
