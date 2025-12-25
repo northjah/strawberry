@@ -281,7 +281,28 @@ const int TITLE_HEIGHT = 36; // Java 标题栏高度
 
         setVisible(true);
         attachSnap(this);
+
+        addWindowStateListener(e -> {
+            if ((e.getNewState() & Frame.MAXIMIZED_BOTH) != 0) {
+                applyMaximizedInsets();
+            } else {
+                clearMaximizedInsets();
+            }
+        });
+
     }
+
+    private void applyMaximizedInsets() {
+        int fix = BORDER; // 6px
+        ((JComponent) getContentPane()).setBorder(
+                BorderFactory.createEmptyBorder(0, 0, fix, fix)
+        );
+    }
+
+    private void clearMaximizedInsets() {
+        ((JComponent) getContentPane()).setBorder(null);
+    }
+
 
     /* ================= Resize 修正算法 ================= */
     /**
